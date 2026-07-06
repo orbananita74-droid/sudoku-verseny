@@ -1,14 +1,20 @@
 console.log("script loaded");
 
 const container = document.getElementById("puzzles");
+
+// biztonságos puzzles betöltés
 const puzzles = window.puzzles || [];
 
-// --- LEADERBOARD (placeholder, hogy ne hibázzon) ---
+// --------------------
+// LEADERBOARD (dummy, hogy ne hibázzon)
+// --------------------
 function loadLeaderboard() {
-    console.log("Leaderboard nincs még implementálva");
+    return;
 }
 
-// --- SUDOKU LÉTREHOZÁS ---
+// --------------------
+// SUDOKU LÉTREHOZÁS
+// --------------------
 function createPuzzle(index) {
     let table = document.createElement("table");
     table.dataset.index = index;
@@ -26,6 +32,7 @@ function createPuzzle(index) {
             input.dataset.row = r;
             input.dataset.col = c;
 
+            // fix mezők
             if (value !== 0) {
                 input.value = value;
                 input.disabled = true;
@@ -38,13 +45,16 @@ function createPuzzle(index) {
         table.appendChild(row);
     }
 
-    container.appendChild(document.createElement("h3")).innerText =
-        "Sudoku " + (index + 1);
+    let title = document.createElement("h3");
+    title.innerText = "Sudoku " + (index + 1);
 
+    container.appendChild(title);
     container.appendChild(table);
 }
 
-// --- INIT ---
+// --------------------
+// INIT
+// --------------------
 function init() {
     console.log("init running");
 
@@ -60,7 +70,9 @@ function init() {
     loadLeaderboard();
 }
 
-// --- ELLENŐRZÉS ---
+// --------------------
+// ELLENŐRZÉS
+// --------------------
 function checkAll() {
     let name = document.getElementById("name").value;
     let klass = document.getElementById("class").value;
@@ -73,10 +85,11 @@ function checkAll() {
         let inputs = table.querySelectorAll("input");
 
         inputs.forEach(inp => {
-            let r = parseInt(inp.dataset.row);
-            let c = parseInt(inp.dataset.col);
+            let r = +inp.dataset.row;
+            let c = +inp.dataset.col;
 
-            let val = parseInt(inp.value) || 0;
+            let val = +inp.value || 0;
+
             total++;
 
             if (val === puzzle.solution[r][c]) {
@@ -93,18 +106,24 @@ function checkAll() {
     document.getElementById("result").innerText =
         `Eredmény: ${correct}/${total}`;
 
-    // Firebase mentés (biztonságosan)
-    if (window.db) {
-        db.collection("results").add({
-            name: name,
-            class: klass,
-            score: correct,
-            time: new Date().toLocaleString()
-        });
+    // Firebase mentés biztonságosan
+    try {
+        if (window.db) {
+            db.collection("results").add({
+                name: name,
+                class: klass,
+                score: correct,
+                time: new Date().toLocaleString()
+            });
+        }
+    } catch (e) {
+        console.log("Firebase hiba:", e);
     }
 
     loadLeaderboard();
 }
 
-// --- INDÍTÁS ---
+// --------------------
+// INDÍTÁS
+// --------------------
 window.addEventListener("load", init);
