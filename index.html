@@ -15,14 +15,12 @@ h1 {
     margin-top: 20px;
 }
 
-/* --- Sudoku tábla --- */
 table {
     margin: 20px auto;
     border-collapse: collapse;
     background: white;
 }
 
-/* alap cella */
 td {
     border: 1px solid #333;
     width: 38px;
@@ -30,7 +28,6 @@ td {
     padding: 0;
 }
 
-/* input mező */
 input {
     width: 36px;
     height: 36px;
@@ -40,7 +37,6 @@ input {
     outline: none;
 }
 
-/* helyes / hibás */
 input.correct {
     background: #b6fcb6;
 }
@@ -49,7 +45,7 @@ input.wrong {
     background: #ffb3b3;
 }
 
-/* --- 3x3 BLOKK VASTAG VONALAK --- */
+/* 3x3 vastag vonalak */
 td:nth-child(3n) {
     border-right: 3px solid #000;
 }
@@ -58,7 +54,6 @@ tr:nth-child(3n) td {
     border-bottom: 3px solid #000;
 }
 
-/* felső és bal keret erősebb */
 table tr:first-child td {
     border-top: 3px solid #000;
 }
@@ -67,13 +62,12 @@ table td:first-child {
     border-left: 3px solid #000;
 }
 
-/* --- HALVÁNY CSÍKOZÁS (jobb átláthatóság) --- */
+/* csíkozás */
 tr:nth-child(odd) td:nth-child(even),
 tr:nth-child(even) td:nth-child(odd) {
     background: #f2f2f2;
 }
 
-/* konténerek */
 .section {
     margin: 20px;
     padding: 15px;
@@ -89,7 +83,7 @@ tr:nth-child(even) td:nth-child(odd) {
 
 <div class="section">
     <input id="name" placeholder="Név">
-    <input id="class" placeholder="Osztály">
+    <input id="className" placeholder="Osztály">
 </div>
 
 <div id="puzzles"></div>
@@ -119,6 +113,8 @@ tr:nth-child(even) td:nth-child(odd) {
   };
 
   firebase.initializeApp(firebaseConfig);
+
+  // globális DB
   window.db = firebase.firestore();
 </script>
 
