@@ -9,10 +9,21 @@ function createPuzzle(index) {
 
         for (let c = 0; c < 9; c++) {
             let cell = document.createElement("td");
-            let input = document.createElement("input");
-            input.maxLength = 1;
-            input.dataset.row = r;
-            input.dataset.col = c;
+
+let value = puzzles[index].solution[r][c];
+
+let input = document.createElement("input");
+input.maxLength = 1;
+input.dataset.row = r;
+input.dataset.col = c;
+
+if (value !== 0 && value !== undefined) {
+    input.value = value;
+    input.disabled = true;
+}
+
+
+            
             row.appendChild(cell);
             cell.appendChild(input);
         }
