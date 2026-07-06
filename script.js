@@ -16,7 +16,7 @@ let board = solution.map(row =>
         for (let c = 0; c < 9; c++) {
             let cell = document.createElement("td");
 
-let value = puzzles[index].board[r][c];
+let value = puzzles[index].board?.[r]?.[c] ?? "";
 
 let input = document.createElement("input");
 input.maxLength = 1;
