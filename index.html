@@ -15,6 +15,14 @@ body {
 
 h1 { margin-top: 15px; }
 
+/* ===== IDŐ ===== */
+#timer {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 10px;
+}
+
+/* ===== FELSŐ INPUT ===== */
 .section {
     margin: 10px auto;
     padding: 10px;
@@ -30,15 +38,7 @@ h1 { margin-top: 15px; }
     margin: 5px;
 }
 
-/* IDŐ */
-#timer {
-    font-size: 22px;
-    font-weight: bold;
-    margin: 10px;
-    color: #333;
-}
-
-/* Sudoku */
+/* ===== PUZZLE ===== */
 .puzzle-wrapper {
     margin: 20px auto;
     padding: 15px;
@@ -66,12 +66,22 @@ input {
     border: none;
 }
 
-/* gomb */
+/* ===== GOMBOK ===== */
+.top-buttons,
+.bottom-buttons {
+    margin: 15px;
+}
+
 button {
-    margin: 10px;
     padding: 10px 18px;
     font-size: 16px;
     cursor: pointer;
+}
+
+/* mobil */
+@media (max-width: 600px) {
+    input { width: 30px; height: 30px; }
+    td { width: 32px; height: 32px; }
 }
 </style>
 </head>
@@ -87,12 +97,17 @@ button {
     <input id="className" placeholder="Osztály">
 </div>
 
-<div>
+<!-- FELÜL: INDÍTÁS -->
+<div class="top-buttons">
     <button onclick="startGame()">Verseny indítása</button>
-    <button onclick="checkAll()">Beküldés</button>
 </div>
 
 <div id="puzzles"></div>
+
+<!-- ALUL: BEKÜLDÉS -->
+<div class="bottom-buttons">
+    <button onclick="checkAll()">Beküldés</button>
+</div>
 
 <h2 id="result"></h2>
 
