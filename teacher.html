@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<title>Tanári panel</title>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<style>
+body {
+    font-family: Arial;
+    text-align: center;
+    background: #f4f4f4;
+}
+
+table {
+    margin: 20px auto;
+    border-collapse: collapse;
+    background: white;
+}
+
+td, th {
+    border: 1px solid #333;
+    padding: 8px 12px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Tanári panel</h1>
+
+<button onclick="exportExcel()">📥 Excel letöltés</button>
+
+<table id="resultsTable">
+    <thead>
+        <tr>
+            <th>Név</th>
+            <th>Osztály</th>
+            <th>Pont</th>
+            <th>Idő</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyBDcvw4MQww65SfyW5ZF0Gk7P5oosSZkog",
+    authDomain: "sudoku-verseny.firebaseapp.com",
+    projectId: "sudoku-verseny",
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+let data = [];
+
+function loadData() {
+    db.collection("results").get().then(snapshot => {
+        let tbody = document.querySelector("#resultsTable tbody");
+        tbody.innerHTML = "";
+
+        data = [];
+
+        snapshot.forEach(doc => {
+            let d = doc.data();
+
+            data.push(d);
+
+            let row = `
+                <tr>
+                    <td>${d.name}</td>
+                    <td>${d.class}</td>
+                    <td>${d.score}</td>
+                    <td>${d.time}</td>
+                </tr>
+            `;
+
+            tbody.innerHTML += row;
+        });
+    });
+}
+
+function exportExcel() {
+    let ws = XLSX.utils.json_to_sheet(data);
+    let wb = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(wb, ws, "Eredmények");
+
+    XLSX.writeFile(wb, "sudoku_eredmenyek.xlsx");
+}
+
+loadData();
+</script>
+
+</body>
+</html>
