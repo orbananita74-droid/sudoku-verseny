@@ -55,23 +55,7 @@ td, th {
 
 <button onclick="exportExcel()">📥 Excel letöltés</button>
 
-<!-- ÖSSZEGZÉS -->
-<div class="cards">
-    <div class="card">
-        <h3>Beadások</h3>
-        <p id="count">0</p>
-    </div>
 
-    <div class="card">
-        <h3>Átlag pont</h3>
-        <p id="avg">0</p>
-    </div>
-
-    <div class="card">
-        <h3>Legjobb</h3>
-        <p id="best">0</p>
-    </div>
-</div>
 
 <!-- TÁBLA -->
 <table id="resultsTable">
@@ -128,6 +112,7 @@ function loadData() {
                         <td>${d.name}</td>
                         <td>${d.class}</td>
                         <td>${d.score}</td>
+                        <td>${d.gameTime}</td>
                         <td>${d.time}</td>
                     </tr>
                 `;
