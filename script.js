@@ -3,13 +3,7 @@ const container = document.getElementById("puzzles");
 function createPuzzle(index) {
     let table = document.createElement("table");
     table.dataset.index = index;
-    
-let solution = puzzles[index].solution;
-
-let board = solution.map(row =>
-    row.map(val => (Math.random() < 0.5 ? val : 0))
-);
-    
+     
     for (let r = 0; r < 9; r++) {
         let row = document.createElement("tr");
 
