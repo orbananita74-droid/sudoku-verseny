@@ -3,14 +3,20 @@ const container = document.getElementById("puzzles");
 function createPuzzle(index) {
     let table = document.createElement("table");
     table.dataset.index = index;
+    
+let solution = puzzles[index].solution;
 
+let board = solution.map(row =>
+    row.map(val => (Math.random() < 0.5 ? val : 0))
+);
+    
     for (let r = 0; r < 9; r++) {
         let row = document.createElement("tr");
 
         for (let c = 0; c < 9; c++) {
             let cell = document.createElement("td");
 
-let value = puzzles[index].solution[r][c];
+let value = board[r][c];
 
 let input = document.createElement("input");
 input.maxLength = 1;
