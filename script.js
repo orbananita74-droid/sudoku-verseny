@@ -1,3 +1,10 @@
+console.log("script loaded");
+
+const puzzles = window.puzzles || [];
+
+function loadLeaderboard() {
+    console.log("leaderboard placeholder");
+}
 function createPuzzle(index) {
     let table = document.createElement("table");
     table.dataset.index = index;
