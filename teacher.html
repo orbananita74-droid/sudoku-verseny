@@ -11,8 +11,31 @@ body {
     font-family: Arial;
     text-align: center;
     background: #f4f4f4;
+    margin: 0;
 }
 
+h1 {
+    margin-top: 20px;
+}
+
+/* ===== ÖSSZEGZÉS KÁRTYÁK ===== */
+.cards {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin: 20px;
+}
+
+.card {
+    background: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    min-width: 150px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+/* ===== TÁBLA ===== */
 table {
     margin: 20px auto;
     border-collapse: collapse;
@@ -32,6 +55,25 @@ td, th {
 
 <button onclick="exportExcel()">📥 Excel letöltés</button>
 
+<!-- ÖSSZEGZÉS -->
+<div class="cards">
+    <div class="card">
+        <h3>Beadások</h3>
+        <p id="count">0</p>
+    </div>
+
+    <div class="card">
+        <h3>Átlag pont</h3>
+        <p id="avg">0</p>
+    </div>
+
+    <div class="card">
+        <h3>Legjobb</h3>
+        <p id="best">0</p>
+    </div>
+</div>
+
+<!-- TÁBLA -->
 <table id="resultsTable">
     <thead>
         <tr>
@@ -49,9 +91,9 @@ td, th {
 
 <script>
 const firebaseConfig = {
-    apiKey: "AIzaSyBDcvw4MQww65SfyW5ZF0Gk7P5oosSZkog",
+    apiKey: "AIzaSyBDcvw4MQww65S...",
     authDomain: "sudoku-verseny.firebaseapp.com",
-    projectId: "sudoku-verseny",
+    projectId: "sudoku-verseny"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -60,37 +102,47 @@ const db = firebase.firestore();
 let data = [];
 
 function loadData() {
-    db.collection("results").get().then(snapshot => {
-        let tbody = document.querySelector("#resultsTable tbody");
-        tbody.innerHTML = "";
+    db.collection("results")
+        .get()
+        .then(snapshot => {
 
-        data = [];
+            let tbody = document.querySelector("#resultsTable tbody");
+            tbody.innerHTML = "";
+            data = [];
 
-        snapshot.forEach(doc => {
-            let d = doc.data();
+            let totalScore = 0;
+            let best = 0;
+            let count = 0;
 
-            data.push(d);
+            snapshot.forEach(doc => {
+                let d = doc.data();
+                data.push(d);
 
-            let row = `
-                <tr>
-                    <td>${d.name}</td>
-                    <td>${d.class}</td>
-                    <td>${d.score}</td>
-                    <td>${d.time}</td>
-                </tr>
-            `;
+                count++;
+                totalScore += d.score;
+                if (d.score > best) best = d.score;
 
-            tbody.innerHTML += row;
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${d.name}</td>
+                        <td>${d.class}</td>
+                        <td>${d.score}</td>
+                        <td>${d.time}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById("count").innerText = count;
+            document.getElementById("avg").innerText =
+                count ? (totalScore / count).toFixed(1) : 0;
+            document.getElementById("best").innerText = best;
         });
-    });
 }
 
 function exportExcel() {
     let ws = XLSX.utils.json_to_sheet(data);
     let wb = XLSX.utils.book_new();
-
     XLSX.utils.book_append_sheet(wb, ws, "Eredmények");
-
     XLSX.writeFile(wb, "sudoku_eredmenyek.xlsx");
 }
 
