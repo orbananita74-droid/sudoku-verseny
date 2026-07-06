@@ -16,7 +16,7 @@ h1 {
 }
 
 /* =========================
-   FELÜL NÉV + OSZTÁLY
+   FELÜL: NÉV + OSZTÁLY
 ========================= */
 .section {
     margin: 20px;
@@ -25,12 +25,14 @@ h1 {
     border-radius: 10px;
 }
 
+/* FONTOS: csak ezek a mezők */
 .section input {
-    width: 240px;
-    height: 36px;
+    width: 280px;
+    height: 40px;
     font-size: 16px;
     padding: 5px 10px;
     margin: 5px;
+    box-sizing: border-box;
 }
 
 /* =========================
@@ -42,7 +44,6 @@ table {
     background: white;
 }
 
-/* cellák */
 td {
     border: 1px solid #333;
     width: 38px;
@@ -50,7 +51,7 @@ td {
     padding: 0;
 }
 
-/* sudoku input */
+/* Sudoku input */
 table input {
     width: 36px;
     height: 36px;
@@ -70,7 +71,7 @@ input.wrong {
 }
 
 /* =========================
-   3x3 BLOKK VASTAG VONALAK
+   3x3 vastag rács
 ========================= */
 td:nth-child(3n) {
     border-right: 3px solid #000;
@@ -88,7 +89,7 @@ table td:first-child {
     border-left: 3px solid #000;
 }
 
-/* halvány csíkozás */
+/* enyhe csíkozás */
 tr:nth-child(odd) td:nth-child(even),
 tr:nth-child(even) td:nth-child(odd) {
     background: #f2f2f2;
@@ -100,13 +101,13 @@ tr:nth-child(even) td:nth-child(odd) {
 
 <h1>Sudoku Verseny</h1>
 
-<!-- név + osztály -->
+<!-- NÉV + OSZTÁLY -->
 <div class="section">
     <input id="name" placeholder="Név">
     <input id="className" placeholder="Osztály">
 </div>
 
-<!-- sudoku -->
+<!-- Sudoku -->
 <div id="puzzles"></div>
 
 <button onclick="checkAll()">Beküldés</button>
@@ -116,10 +117,10 @@ tr:nth-child(even) td:nth-child(odd) {
 <h2>Ranglista</h2>
 <div id="leaderboard"></div>
 
-<!-- Sudoku adatok -->
+<!-- DATA -->
 <script src="sudoku.js"></script>
 
-<!-- Firebase -->
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
@@ -137,7 +138,7 @@ firebase.initializeApp(firebaseConfig);
 window.db = firebase.firestore();
 </script>
 
-<!-- fő script -->
+<!-- SCRIPT -->
 <script src="script.js"></script>
 
 </body>
