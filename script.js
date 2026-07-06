@@ -1,19 +1,14 @@
-console.log("script loaded");
+console.log("Sudoku script loaded");
 
-// --- DOM ---
+// --------------------
+// PUZZLE ADATOK
+// --------------------
+const puzzles = window.puzzles || [];
 const container = document.getElementById("puzzles");
 
-// --- SAFETY Puzzles ---
-const puzzles = window.puzzles || [];
-
-console.log("puzzles:", puzzles);
-
-// --- LEADERBOARD (nem tör semmit) ---
-function loadLeaderboard() {
-    console.log("Leaderboard placeholder");
-}
-
-// --- PUZZLE KIRAJZOLÁS ---
+// --------------------
+// PUZZLE KIRAJZOLÁS
+// --------------------
 function createPuzzle(index) {
     let table = document.createElement("table");
 
@@ -49,31 +44,34 @@ function createPuzzle(index) {
     container.appendChild(table);
 }
 
-// --- INDÍTÁS (NINCS LOAD EVENT!) ---
-function start() {
-    console.log("init running");
-
+// --------------------
+// INIT
+// --------------------
+function init() {
     if (!container) {
-        console.error("Nincs #puzzles div!");
+        console.error("Nincs #puzzles elem!");
         return;
     }
 
     container.innerHTML = "";
 
     if (!puzzles.length) {
-        container.innerHTML = "<p>Nincs Sudoku betöltve</p>";
+        container.innerHTML = "<p>Nincs sudoku adat</p>";
         return;
     }
 
     puzzles.forEach((p, i) => createPuzzle(i));
-
-    loadLeaderboard();
 }
 
-// --- ELLENŐRZÉS ---
+// --------------------
+// BEKÜLDÉS (VERSENY MÓD)
+// --------------------
 function checkAll() {
-    let name = document.getElementById("name").value;
-    let klass = document.getElementById("className").value;
+    let nameEl = document.getElementById("name");
+    let classEl = document.getElementById("className");
+
+    let name = nameEl ? nameEl.value : "";
+    let klass = classEl ? classEl.value : "";
 
     let total = 0;
     let correct = 0;
@@ -100,25 +98,34 @@ function checkAll() {
         });
     });
 
-    document.getElementById("result").innerText =
-        `Eredmény: ${correct}/${total}`;
+    // --------------------
+    // VERSENY MÓD: NINCS EREDMÉNY KIÍRÁS
+    // --------------------
+    let resultBox = document.getElementById("result");
 
-    // Firebase mentés (biztonságos)
+    if (resultBox) {
+        resultBox.innerText = "Beküldve! Köszönjük.";
+    }
+
+    // --------------------
+    // FIREBASE MENTÉS
+    // --------------------
     try {
         if (window.db) {
             db.collection("results").add({
                 name: name,
                 class: klass,
                 score: correct,
+                total: total,
                 time: new Date().toLocaleString()
             });
         }
     } catch (e) {
         console.log("Firebase hiba:", e);
     }
-
-    loadLeaderboard();
 }
 
-// --- AZONNALI INDÍTÁS (EZ A LÉNYEG) ---
-start();
+// --------------------
+// INDÍTÁS
+// --------------------
+init();
