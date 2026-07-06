@@ -20,11 +20,19 @@ function createPuzzle(index) {
         table.appendChild(row);
     }
 
-    container.appendChild(document.createElement("h3")).innerText = "Sudoku " + (index + 1);
+    container.appendChild(document.createElement("h3")).innerText =
+        "Sudoku " + (index + 1);
+
     container.appendChild(table);
 }
 
-puzzles.forEach((p, i) => createPuzzle(i));
+function init() {
+    container.innerHTML = "";
+
+    puzzles.forEach((p, i) => createPuzzle(i));
+
+    loadLeaderboard();
+}
 
 function checkAll() {
     let name = document.getElementById("name").value;
@@ -38,10 +46,10 @@ function checkAll() {
         let inputs = table.querySelectorAll("input");
 
         inputs.forEach(inp => {
-            let r = inp.dataset.row;
-            let c = inp.dataset.col;
+            let r = parseInt(inp.dataset.row);
+            let c = parseInt(inp.dataset.col);
 
-            let val = parseInt(inp.value);
+            let val = parseInt(inp.value) || 0;
             total++;
 
             if (val === puzzle.solution[r][c]) {
@@ -55,21 +63,17 @@ function checkAll() {
         });
     });
 
-    let score = correct;
-
     document.getElementById("result").innerText =
         `Eredmény: ${correct}/${total}`;
 
-    // FIREBASE MENTÉS
     db.collection("results").add({
         name: name,
         class: klass,
-        score: score,
+        score: correct,
         time: new Date().toLocaleString()
-    });
-}
-
     });
 
     loadLeaderboard();
-});
+}
+
+window.addEventListener("load", init);
