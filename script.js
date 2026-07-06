@@ -10,11 +10,17 @@ let running = false;
 function startGame() {
 
     if (running) return;
-
     running = true;
-    startTime = Date.now();
 
-    renderPuzzles();
+    renderPuzzles();   // 👉 CSAK MOST jelenik meg
+    startTimer();
+}
+
+// =====================
+// IDŐMÉRŐ
+// =====================
+function startTimer() {
+    startTime = Date.now();
 
     timerInterval = setInterval(() => {
         let diff = Date.now() - startTime;
@@ -32,9 +38,11 @@ function startGame() {
 // PUZZLE RENDER
 // =====================
 function renderPuzzles() {
+
     container.innerHTML = "";
 
     puzzles.forEach((p, i) => {
+
         const wrap = document.createElement("div");
         wrap.className = "puzzle-wrapper";
 
@@ -113,7 +121,8 @@ function checkAll() {
 
     container.innerHTML = "";
     document.querySelector(".section").style.display = "none";
-    document.querySelector("button").style.display = "none";
+    document.querySelector(".top-buttons").style.display = "none";
+    document.querySelector(".bottom-buttons").style.display = "none";
 
     document.getElementById("result").innerText =
         "Köszönjük a beküldést!";
