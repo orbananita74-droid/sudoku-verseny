@@ -68,3 +68,10 @@ function checkAll() {
         time: new Date().toLocaleString()
     });
 }
+window.addEventListener("load", function () {
+    puzzles.forEach((puzzle, index) => {
+        createPuzzle(index);
+    });
+
+    loadLeaderboard();
+});
