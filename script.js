@@ -12,17 +12,22 @@ function startGame() {
     if (running) return;
     running = true;
 
-    renderPuzzles();   // 👉 CSAK MOST jelenik meg
+    renderPuzzles();
     startTimer();
+
+    // gomb elrejtése indulás után (ne lehessen újraindítani)
+    document.querySelector(".top-buttons").style.display = "none";
 }
 
 // =====================
 // IDŐMÉRŐ
 // =====================
 function startTimer() {
+
     startTime = Date.now();
 
     timerInterval = setInterval(() => {
+
         let diff = Date.now() - startTime;
 
         let sec = Math.floor(diff / 1000);
@@ -31,11 +36,12 @@ function startTimer() {
 
         document.getElementById("timer").innerText =
             `⏱ ${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+
     }, 1000);
 }
 
 // =====================
-// PUZZLE RENDER
+// PUZZLE KIRAJZOLÁS
 // =====================
 function renderPuzzles() {
 
@@ -55,10 +61,11 @@ function renderPuzzles() {
             const row = document.createElement("tr");
 
             for (let c = 0; c < 9; c++) {
+
                 const cell = document.createElement("td");
                 const input = document.createElement("input");
 
-                let val = puzzles[i].board[r][c];
+                const val = puzzles[i].board[r][c];
 
                 input.dataset.r = r;
                 input.dataset.c = c;
@@ -119,14 +126,15 @@ function checkAll() {
         }
     });
 
+    // minden eltüntetése
     container.innerHTML = "";
     document.querySelector(".section").style.display = "none";
-    document.querySelector(".top-buttons").style.display = "none";
     document.querySelector(".bottom-buttons").style.display = "none";
 
     document.getElementById("result").innerText =
         "Köszönjük a beküldést!";
 
+    // mentés Firebase-be
     db.collection("results").add({
         name,
         class: klass,
