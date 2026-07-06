@@ -1,42 +1,29 @@
-console.log("Sudoku verseny ready");
-
-const puzzles = window.puzzles || [];
 const container = document.getElementById("puzzles");
 
 let startTime = null;
-let timerInterval = null;
 
 // =====================
-// TIMER
-// =====================
-function startTimer() {
-    startTime = Date.now();
-
-    timerInterval = setInterval(() => {
-        let diff = Date.now() - startTime;
-        let sec = Math.floor(diff / 1000);
-        let min = Math.floor(sec / 60);
-        sec = sec % 60;
-
-        document.getElementById("timer").innerText =
-            `⏱ ${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
-    }, 1000);
-}
-
-// =====================
-// VERSENY INDÍTÁS
+// TIMER INDULÁS
 // =====================
 function startGame() {
-    container.innerHTML = "";
-    puzzles.forEach((p, i) => createPuzzle(i));
-    startTimer();
+    startTime = Date.now();
 }
 
+// automatikus indulás
+window.addEventListener("load", startGame);
+
 // =====================
-// PUZZLE
+// PUZZLE LÉTREHOZÁS
 // =====================
 function createPuzzle(index) {
-    let table = document.createElement("table");
+    const wrap = document.createElement("div");
+    wrap.className = "puzzle-wrapper";
+
+    const title = document.createElement("div");
+    title.className = "puzzle-title";
+    title.innerText = `Feladat ${index + 1}`;
+
+    const table = document.createElement("table");
 
     for (let r = 0; r < 9; r++) {
         let row = document.createElement("tr");
@@ -53,10 +40,7 @@ function createPuzzle(index) {
             if (val !== 0) {
                 input.value = val;
                 input.disabled = true;
-                input.style.color = "#333";
                 input.style.background = "#eee";
-            } else {
-                input.style.color = "#1e66d0";
             }
 
             cell.appendChild(input);
@@ -66,14 +50,25 @@ function createPuzzle(index) {
         table.appendChild(row);
     }
 
-    container.appendChild(table);
+    wrap.appendChild(title);
+    wrap.appendChild(table);
+    container.appendChild(wrap);
 }
+
+// =====================
+// INIT
+// =====================
+window.addEventListener("load", () => {
+    container.innerHTML = "";
+    puzzles.forEach((p, i) => createPuzzle(i));
+});
 
 // =====================
 // BEKÜLDÉS
 // =====================
 function checkAll() {
-    clearInterval(timerInterval);
+    const endTime = Date.now();
+    const gameTime = Math.floor((endTime - startTime) / 1000);
 
     let name = document.getElementById("name").value;
     let klass = document.getElementById("className").value;
@@ -82,7 +77,7 @@ function checkAll() {
     let correct = 0;
 
     puzzles.forEach((p, i) => {
-        let inputs = container.querySelectorAll("input");
+        const inputs = container.querySelectorAll("input");
 
         inputs.forEach(inp => {
             let r = inp.dataset.r;
@@ -96,53 +91,19 @@ function checkAll() {
     });
 
     container.innerHTML = "";
-    document.getElementById("name").style.display = "none";
-    document.getElementById("className").style.display = "none";
-
-    document.querySelectorAll("button").forEach(b => b.style.display = "none");
+    document.querySelector(".section").style.display = "none";
+    document.querySelector("button").style.display = "none";
 
     document.getElementById("result").innerText =
         "Köszönjük a beküldést!";
 
-    saveResult(name, klass, correct, total);
-    loadLeaderboard();
-}
-
-// =====================
-// FIREBASE MENTÉS
-// =====================
-function saveResult(name, klass, score, total) {
-    if (!window.db) return;
-
     db.collection("results").add({
         name,
         class: klass,
-        score,
+        score: correct,
         total,
-        time: new Date().toLocaleString()
+        time: new Date().toLocaleString(),
+        gameTime: gameTime
     });
 }
 
-// =====================
-// TOP10 RANGLISTA
-// =====================
-function loadLeaderboard() {
-    db.collection("results")
-        .orderBy("score", "desc")
-        .limit(10)
-        .get()
-        .then(snapshot => {
-            let html = "";
-
-            snapshot.forEach(doc => {
-                let d = doc.data();
-                html += `<p>${d.name} (${d.class}) - ${d.score}/${d.total}</p>`;
-            });
-
-            document.getElementById("leaderboard").innerHTML = html;
-        });
-}
-
-window.addEventListener("load", () => {
-    loadLeaderboard();
-});
