@@ -15,14 +15,14 @@ body {
 
 h1 { margin-top: 15px; }
 
-/* ===== IDŐ ===== */
+/* ===================== TIMER ===================== */
 #timer {
     font-size: 22px;
     font-weight: bold;
     margin: 10px;
 }
 
-/* ===== FELSŐ INPUT ===== */
+/* ===================== INPUT ===================== */
 .section {
     margin: 10px auto;
     padding: 10px;
@@ -38,35 +38,7 @@ h1 { margin-top: 15px; }
     margin: 5px;
 }
 
-/* ===== PUZZLE ===== */
-.puzzle-wrapper {
-    margin: 20px auto;
-    padding: 15px;
-    background: white;
-    border-radius: 10px;
-    width: fit-content;
-}
-
-table {
-    border-collapse: collapse;
-    margin: auto;
-}
-
-td {
-    width: 38px;
-    height: 38px;
-    border: 1px solid #ccc;
-}
-
-input {
-    width: 36px;
-    height: 36px;
-    text-align: center;
-    font-size: 18px;
-    border: none;
-}
-
-/* ===== GOMBOK ===== */
+/* ===================== GOMBOK ===================== */
 .top-buttons,
 .bottom-buttons {
     margin: 15px;
@@ -78,10 +50,77 @@ button {
     cursor: pointer;
 }
 
-/* mobil */
+/* ===================== PUZZLE ===================== */
+.puzzle-wrapper {
+    margin: 20px auto;
+    padding: 15px;
+    background: white;
+    border-radius: 10px;
+    width: fit-content;
+}
+
+/* ===== SUDOKU TÁBLA ===== */
+table {
+    border-collapse: collapse;
+    margin: auto;
+    border: 3px solid #000; /* külső keret */
+}
+
+/* alap cella */
+td {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #aaa;
+    padding: 0;
+}
+
+/* input */
+input {
+    width: 38px;
+    height: 38px;
+    text-align: center;
+    font-size: 18px;
+    border: none;
+    outline: none;
+}
+
+/* fix számok */
+input:disabled {
+    background: #eee;
+    font-weight: bold;
+}
+
+/* ===================== 3x3 BLOKK VASTAGÍTÁS ===================== */
+
+/* függőleges vastag vonalak */
+td:nth-child(3n) {
+    border-right: 3px solid #000;
+}
+
+/* vízszintes vastag vonalak */
+tr:nth-child(3n) td {
+    border-bottom: 3px solid #000;
+}
+
+/* felső + bal keret erősítése */
+tr:first-child td {
+    border-top: 3px solid #000;
+}
+
+td:first-child {
+    border-left: 3px solid #000;
+}
+
+/* ===================== HALVÁNY CSÍKOZÁS ===================== */
+tr:nth-child(odd) td:nth-child(even),
+tr:nth-child(even) td:nth-child(odd) {
+    background: #f6f6f6;
+}
+
+/* ===================== MOBIL ===================== */
 @media (max-width: 600px) {
-    input { width: 30px; height: 30px; }
-    td { width: 32px; height: 32px; }
+    td { width: 34px; height: 34px; }
+    input { width: 32px; height: 32px; font-size: 16px; }
 }
 </style>
 </head>
@@ -97,14 +136,12 @@ button {
     <input id="className" placeholder="Osztály">
 </div>
 
-<!-- FELÜL: INDÍTÁS -->
 <div class="top-buttons">
     <button onclick="startGame()">Verseny indítása</button>
 </div>
 
 <div id="puzzles"></div>
 
-<!-- ALUL: BEKÜLDÉS -->
 <div class="bottom-buttons">
     <button onclick="checkAll()">Beküldés</button>
 </div>
