@@ -27,6 +27,9 @@ function createPuzzle(index) {
 puzzles.forEach((p, i) => createPuzzle(i));
 
 function checkAll() {
+    let name = document.getElementById("name").value;
+    let klass = document.getElementById("class").value;
+
     let total = 0;
     let correct = 0;
 
@@ -52,6 +55,16 @@ function checkAll() {
         });
     });
 
+    let score = correct;
+
     document.getElementById("result").innerText =
-        `Eredmény: ${correct}/${total} pont`;
+        `Eredmény: ${correct}/${total}`;
+
+    // FIREBASE MENTÉS
+    db.collection("results").add({
+        name: name,
+        class: klass,
+        score: score,
+        time: new Date().toLocaleString()
+    });
 }
