@@ -1,8 +1,5 @@
-console.log("Sudoku script loaded");
+console.log("Sudoku verseny script loaded");
 
-// --------------------
-// PUZZLE ADATOK
-// --------------------
 const puzzles = window.puzzles || [];
 const container = document.getElementById("puzzles");
 
@@ -37,41 +34,28 @@ function createPuzzle(index) {
         table.appendChild(row);
     }
 
-    let title = document.createElement("h3");
-    title.innerText = "Sudoku " + (index + 1);
+    container.appendChild(document.createElement("h3")).innerText =
+        "Sudoku " + (index + 1);
 
-    container.appendChild(title);
     container.appendChild(table);
 }
 
 // --------------------
-// INIT
+// INDÍTÁS
 // --------------------
 function init() {
-    if (!container) {
-        console.error("Nincs #puzzles elem!");
-        return;
-    }
-
     container.innerHTML = "";
-
-    if (!puzzles.length) {
-        container.innerHTML = "<p>Nincs sudoku adat</p>";
-        return;
-    }
-
     puzzles.forEach((p, i) => createPuzzle(i));
 }
 
+init();
+
 // --------------------
-// BEKÜLDÉS (VERSENY MÓD)
+// BEKÜLDÉS (VERSENY MÓD - NINCS VISSZAJELZÉS)
 // --------------------
 function checkAll() {
-    let nameEl = document.getElementById("name");
-    let classEl = document.getElementById("className");
-
-    let name = nameEl ? nameEl.value : "";
-    let klass = classEl ? classEl.value : "";
+    let name = document.getElementById("name")?.value || "";
+    let klass = document.getElementById("className")?.value || "";
 
     let total = 0;
     let correct = 0;
@@ -89,26 +73,24 @@ function checkAll() {
 
             if (val === puzzle.solution[r][c]) {
                 correct++;
-                inp.classList.add("correct");
-                inp.classList.remove("wrong");
-            } else {
-                inp.classList.add("wrong");
-                inp.classList.remove("correct");
             }
         });
     });
 
     // --------------------
-    // VERSENY MÓD: NINCS EREDMÉNY KIÍRÁS
+    // ELREJTJÜK A TELJES JÁTÉKOT
     // --------------------
-    let resultBox = document.getElementById("result");
+    container.innerHTML = "";
 
-    if (resultBox) {
-        resultBox.innerText = "Beküldve! Köszönjük.";
-    }
+    document.getElementById("result").innerText =
+        "Köszönjük, hogy beküldted!";
+
+    // ranglista elrejtése (ha van HTML-ben)
+    let lb = document.getElementById("leaderboard");
+    if (lb) lb.style.display = "none";
 
     // --------------------
-    // FIREBASE MENTÉS
+    // MENTÉS FIREBASE-BE
     // --------------------
     try {
         if (window.db) {
@@ -124,8 +106,3 @@ function checkAll() {
         console.log("Firebase hiba:", e);
     }
 }
-
-// --------------------
-// INDÍTÁS
-// --------------------
-init();
