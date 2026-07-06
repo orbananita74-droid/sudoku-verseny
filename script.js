@@ -1,23 +1,21 @@
 console.log("script loaded");
 
+// --- DOM ---
 const container = document.getElementById("puzzles");
 
-// biztonságos puzzles betöltés
+// --- SAFETY Puzzles ---
 const puzzles = window.puzzles || [];
 
-// --------------------
-// LEADERBOARD (dummy, hogy ne hibázzon)
-// --------------------
+console.log("puzzles:", puzzles);
+
+// --- LEADERBOARD (nem tör semmit) ---
 function loadLeaderboard() {
-    return;
+    console.log("Leaderboard placeholder");
 }
 
-// --------------------
-// SUDOKU LÉTREHOZÁS
-// --------------------
+// --- PUZZLE KIRAJZOLÁS ---
 function createPuzzle(index) {
     let table = document.createElement("table");
-    table.dataset.index = index;
 
     for (let r = 0; r < 9; r++) {
         let row = document.createElement("tr");
@@ -32,7 +30,6 @@ function createPuzzle(index) {
             input.dataset.row = r;
             input.dataset.col = c;
 
-            // fix mezők
             if (value !== 0) {
                 input.value = value;
                 input.disabled = true;
@@ -52,11 +49,14 @@ function createPuzzle(index) {
     container.appendChild(table);
 }
 
-// --------------------
-// INIT
-// --------------------
-function init() {
+// --- INDÍTÁS (NINCS LOAD EVENT!) ---
+function start() {
     console.log("init running");
+
+    if (!container) {
+        console.error("Nincs #puzzles div!");
+        return;
+    }
 
     container.innerHTML = "";
 
@@ -70,12 +70,10 @@ function init() {
     loadLeaderboard();
 }
 
-// --------------------
-// ELLENŐRZÉS
-// --------------------
+// --- ELLENŐRZÉS ---
 function checkAll() {
     let name = document.getElementById("name").value;
-    let klass = document.getElementById("class").value;
+    let klass = document.getElementById("className").value;
 
     let total = 0;
     let correct = 0;
@@ -87,7 +85,6 @@ function checkAll() {
         inputs.forEach(inp => {
             let r = +inp.dataset.row;
             let c = +inp.dataset.col;
-
             let val = +inp.value || 0;
 
             total++;
@@ -106,7 +103,7 @@ function checkAll() {
     document.getElementById("result").innerText =
         `Eredmény: ${correct}/${total}`;
 
-    // Firebase mentés biztonságosan
+    // Firebase mentés (biztonságos)
     try {
         if (window.db) {
             db.collection("results").add({
@@ -123,7 +120,5 @@ function checkAll() {
     loadLeaderboard();
 }
 
-// --------------------
-// INDÍTÁS
-// --------------------
-window.addEventListener("load", init);
+// --- AZONNALI INDÍTÁS (EZ A LÉNYEG) ---
+start();
