@@ -2,7 +2,7 @@
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
-<title>Tanári panel</title>
+<title>Tanári panel - Sudoku</title>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
@@ -11,31 +11,20 @@ body {
     font-family: Arial;
     text-align: center;
     background: #f4f4f4;
-    margin: 0;
 }
 
 h1 {
     margin-top: 20px;
 }
 
-/* ===== ÖSSZEGZÉS KÁRTYÁK ===== */
-.cards {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
-    margin: 20px;
+button {
+    margin: 10px;
+    padding: 10px 15px;
+    font-size: 14px;
+    cursor: pointer;
 }
 
-.card {
-    background: white;
-    padding: 15px 25px;
-    border-radius: 10px;
-    min-width: 150px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-}
-
-/* ===== TÁBLA ===== */
+/* TÁBLA */
 table {
     margin: 20px auto;
     border-collapse: collapse;
@@ -45,29 +34,32 @@ table {
 td, th {
     border: 1px solid #333;
     padding: 8px 12px;
+    font-size: 14px;
+}
+
+th {
+    background: #eee;
 }
 </style>
 </head>
 
 <body>
 
-<h1>Tanári panel</h1>
+<h1>🧑‍🏫 Tanári panel</h1>
 
 <button onclick="exportExcel()">📥 Excel letöltés</button>
+<button onclick="clearResults()">🗑 Eredmények törlése</button>
 
-
-
-<!-- TÁBLA -->
 <table id="resultsTable">
-   <thead>
-    <tr>
-        <th>Név</th>
-        <th>Osztály</th>
-        <th>Pont</th>
-        <th>Játékidő (mp)</th>
-        <th>Beküldési idő</th>
-    </tr>
-</thead>
+    <thead>
+        <tr>
+            <th>Név</th>
+            <th>Osztály</th>
+            <th>Pont</th>
+            <th>Játékidő (mp)</th>
+            <th>Beküldési idő</th>
+        </tr>
+    </thead>
     <tbody></tbody>
 </table>
 
@@ -86,52 +78,68 @@ const db = firebase.firestore();
 
 let data = [];
 
+// =====================
+// ADATOK BETÖLTÉSE
+// =====================
 function loadData() {
-    db.collection("results")
-        .get()
-        .then(snapshot => {
 
-            let tbody = document.querySelector("#resultsTable tbody");
-            tbody.innerHTML = "";
-            data = [];
+    db.collection("results").get().then(snapshot => {
 
-            let totalScore = 0;
-            let best = 0;
-            let count = 0;
+        let tbody = document.querySelector("#resultsTable tbody");
+        tbody.innerHTML = "";
 
-            snapshot.forEach(doc => {
-                let d = doc.data();
-                data.push(d);
+        data = [];
 
-                count++;
-                totalScore += d.score;
-                if (d.score > best) best = d.score;
+        snapshot.forEach(doc => {
 
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${d.name}</td>
-                        <td>${d.class}</td>
-                        <td>${d.score}</td>
-                        <td>${d.gameTime}</td>
-                        <td>${d.time}</td>
-                    </tr>
-                `;
-            });
+            let d = doc.data();
+            data.push(d);
 
-            document.getElementById("count").innerText = count;
-            document.getElementById("avg").innerText =
-                count ? (totalScore / count).toFixed(1) : 0;
-            document.getElementById("best").innerText = best;
+            tbody.innerHTML += `
+                <tr>
+                    <td>${d.name}</td>
+                    <td>${d.class}</td>
+                    <td>${d.score}</td>
+                    <td>${d.gameTime}</td>
+                    <td>${d.time}</td>
+                </tr>
+            `;
         });
+    });
 }
 
+// =====================
+// EXCEL EXPORT
+// =====================
 function exportExcel() {
+
     let ws = XLSX.utils.json_to_sheet(data);
     let wb = XLSX.utils.book_new();
+
     XLSX.utils.book_append_sheet(wb, ws, "Eredmények");
+
     XLSX.writeFile(wb, "sudoku_eredmenyek.xlsx");
 }
 
+// =====================
+// EREDMÉNYEK TÖRLÉSE
+// =====================
+function clearResults() {
+
+    if (!confirm("Biztos törlöd az összes eredményt?")) return;
+
+    db.collection("results").get().then(snapshot => {
+
+        snapshot.forEach(doc => {
+            db.collection("results").doc(doc.id).delete();
+        });
+
+        alert("Eredmények törölve!");
+        loadData();
+    });
+}
+
+// indulás
 loadData();
 </script>
 
