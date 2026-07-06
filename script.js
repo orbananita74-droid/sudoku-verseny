@@ -41,7 +41,7 @@ function createPuzzle(index) {
 }
 
 // --------------------
-// INDÍTÁS
+// INIT
 // --------------------
 function init() {
     container.innerHTML = "";
@@ -51,7 +51,7 @@ function init() {
 init();
 
 // --------------------
-// BEKÜLDÉS (VERSENY MÓD - NINCS VISSZAJELZÉS)
+// BEKÜLDÉS (TELJES VERSENY LEZÁRÁS)
 // --------------------
 function checkAll() {
     let name = document.getElementById("name")?.value || "";
@@ -78,19 +78,28 @@ function checkAll() {
     });
 
     // --------------------
-    // ELREJTJÜK A TELJES JÁTÉKOT
+    // TELJES FELÜLET ELTÜNTETÉSE
     // --------------------
     container.innerHTML = "";
 
-    document.getElementById("result").innerText =
-        "Köszönjük, hogy beküldted!";
-
-    // ranglista elrejtése (ha van HTML-ben)
+    let nameBox = document.getElementById("name");
+    let classBox = document.getElementById("className");
     let lb = document.getElementById("leaderboard");
+    let btn = document.querySelector("button");
+
+    if (nameBox) nameBox.style.display = "none";
+    if (classBox) classBox.style.display = "none";
     if (lb) lb.style.display = "none";
+    if (btn) btn.style.display = "none";
 
     // --------------------
-    // MENTÉS FIREBASE-BE
+    // ÜZENET
+    // --------------------
+    document.getElementById("result").innerText =
+        "Köszönjük, hogy beküldted a feladatot!";
+
+    // --------------------
+    // FIREBASE MENTÉS
     // --------------------
     try {
         if (window.db) {
