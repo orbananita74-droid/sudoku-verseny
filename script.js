@@ -8,7 +8,7 @@ function createPuzzle(index) {
         for (let c = 0; c < 9; c++) {
             let cell = document.createElement("td");
 
-            let value = puzzles[index].board[r][c];
+            let value = puzzles[index].board?.[r]?.[c] ?? 0;
 
             let input = document.createElement("input");
             input.maxLength = 1;
@@ -20,15 +20,18 @@ function createPuzzle(index) {
                 input.disabled = true;
             }
 
-            row.appendChild(cell);
             cell.appendChild(input);
+            row.appendChild(cell);
         }
 
         table.appendChild(row);
     }
 
-    container.appendChild(document.createElement("h3")).innerText =
-        "Sudoku " + (index + 1);
+    container.appendChild(
+        Object.assign(document.createElement("h3"), {
+            innerText: "Sudoku " + (index + 1)
+        })
+    );
 
     container.appendChild(table);
 }
