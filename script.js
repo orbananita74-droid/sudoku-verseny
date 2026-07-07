@@ -18,7 +18,6 @@ document.addEventListener("visibilitychange", () => {
 
     if (document.hidden) {
 
-        // lap háttérbe került
         backgroundStart = Date.now();
 
         visibilityLog.push({
@@ -28,7 +27,6 @@ document.addEventListener("visibilitychange", () => {
 
     } else {
 
-        // visszatért a lap
         if (backgroundStart !== null) {
 
             let duration = Math.floor(
@@ -59,7 +57,6 @@ function startGame() {
 
     running = true;
 
-    // Fair Play adatok nullázása új verseny indulásakor
     tabSwitchCount = 0;
     totalBackgroundTime = 0;
     backgroundStart = null;
@@ -68,7 +65,6 @@ function startGame() {
     renderPuzzles();
     startTimer();
 
-    // gomb elrejtése indulás után
     document.querySelector(".top-buttons").style.display = "none";
 }
 
@@ -86,6 +82,7 @@ function startTimer() {
 
         let sec = Math.floor(diff / 1000);
         let min = Math.floor(sec / 60);
+
         sec = sec % 60;
 
         document.getElementById("timer").innerText =
@@ -124,7 +121,6 @@ function renderPuzzles() {
                 const input = document.createElement("input");
 
                 const val = puzzles[i].board[r][c];
-
 
                 input.dataset.r = r;
                 input.dataset.c = c;
@@ -192,33 +188,43 @@ function checkAll() {
 
     let total = 0;
 
-inputs.forEach(inp => {
 
-    // Csak a versenyző által kitöltött mezők számítanak
-    if (!inp.disabled) {
+    // =====================
+    // JAVÍTOTT PONTOZÁS
+    // Csak a versenyző által beírt
+    // helyes számok számítanak
+    // =====================
 
-        let r = inp.dataset.r;
-        let c = inp.dataset.c;
-        let p = inp.dataset.puzzle;
+    inputs.forEach(inp => {
 
-        let val = +inp.value || 0;
 
-        total++;
+        if (!inp.disabled && inp.value !== "") {
 
-        if (val === puzzles[p].solution[r][c]) {
-            correct++;
+
+            let r = Number(inp.dataset.r);
+
+            let c = Number(inp.dataset.c);
+
+            let p = Number(inp.dataset.puzzle);
+
+
+            let val = Number(inp.value);
+
+
+            total++;
+
+
+            if (val === puzzles[p].solution[r][c]) {
+
+                correct++;
+
+            }
+
         }
-    }
-});
+
+    });
 
 
-
-
-    
-
-
-
-    // minden eltüntetése
 
     container.innerHTML = "";
 
@@ -232,8 +238,6 @@ inputs.forEach(inp => {
 
 
 
-    // mentés Firebase-be
-
     db.collection("results").add({
 
         name,
@@ -246,7 +250,6 @@ inputs.forEach(inp => {
 
         gameTime,
 
-        // FAIR PLAY ADATOK
 
         tabSwitchCount,
 
