@@ -43,6 +43,7 @@ th {
 </style>
 </head>
 
+
 <body>
 
 <h1>🧑‍🏫 Tanári panel</h1>
@@ -50,98 +51,195 @@ th {
 <button onclick="exportExcel()">📥 Excel letöltés</button>
 <button onclick="clearResults()">🗑 Eredmények törlése</button>
 
+
 <table id="resultsTable">
+
     <thead>
+
         <tr>
             <th>Név</th>
             <th>Osztály</th>
             <th>Pont</th>
             <th>Játékidő (mp)</th>
+            <th>Lapelhagyás</th>
+            <th>Háttéridő (mp)</th>
             <th>Beküldési idő</th>
         </tr>
+
     </thead>
+
+
     <tbody></tbody>
+
 </table>
+
+
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
+
 <script>
+
 const firebaseConfig = {
     apiKey: "AIzaSyBDcvw4MQww65S...",
     authDomain: "sudoku-verseny.firebaseapp.com",
     projectId: "sudoku-verseny"
 };
 
+
 firebase.initializeApp(firebaseConfig);
+
 const db = firebase.firestore();
 
+
 let data = [];
+
 
 // =====================
 // ADATOK BETÖLTÉSE
 // =====================
+
 function loadData() {
+
 
     db.collection("results").get().then(snapshot => {
 
+
         let tbody = document.querySelector("#resultsTable tbody");
+
         tbody.innerHTML = "";
+
 
         data = [];
 
+
+
         snapshot.forEach(doc => {
 
+
             let d = doc.data();
+
+
+            // régebbi eredmények kezelése
+
+            if (d.tabSwitchCount === undefined) {
+                d.tabSwitchCount = 0;
+            }
+
+
+            if (d.totalBackgroundTime === undefined) {
+                d.totalBackgroundTime = 0;
+            }
+
+
+
             data.push(d);
 
+
+
             tbody.innerHTML += `
+
                 <tr>
+
                     <td>${d.name}</td>
+
                     <td>${d.class}</td>
+
                     <td>${d.score}</td>
+
                     <td>${d.gameTime}</td>
+
+                    <td>${d.tabSwitchCount}</td>
+
+                    <td>${d.totalBackgroundTime}</td>
+
                     <td>${d.time}</td>
+
                 </tr>
+
             `;
+
+
         });
+
+
     });
+
+
 }
+
 
 // =====================
 // EXCEL EXPORT
 // =====================
+
 function exportExcel() {
 
+
     let ws = XLSX.utils.json_to_sheet(data);
+
     let wb = XLSX.utils.book_new();
 
-    XLSX.utils.book_append_sheet(wb, ws, "Eredmények");
 
-    XLSX.writeFile(wb, "sudoku_eredmenyek.xlsx");
+    XLSX.utils.book_append_sheet(
+        wb,
+        ws,
+        "Eredmények"
+    );
+
+
+    XLSX.writeFile(
+        wb,
+        "sudoku_eredmenyek.xlsx"
+    );
+
 }
+
+
 
 // =====================
 // EREDMÉNYEK TÖRLÉSE
 // =====================
+
 function clearResults() {
+
 
     if (!confirm("Biztos törlöd az összes eredményt?")) return;
 
+
+
     db.collection("results").get().then(snapshot => {
 
+
         snapshot.forEach(doc => {
-            db.collection("results").doc(doc.id).delete();
+
+            db.collection("results")
+              .doc(doc.id)
+              .delete();
+
         });
 
+
         alert("Eredmények törölve!");
+
         loadData();
+
+
     });
+
+
 }
 
+
+
 // indulás
+
 loadData();
+
+
 </script>
+
 
 </body>
 </html>
