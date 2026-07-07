@@ -192,30 +192,29 @@ function checkAll() {
 
     let total = 0;
 
+inputs.forEach(inp => {
 
-    inputs.forEach(inp => {
-
+    // Csak a versenyző által kitöltött mezők számítanak
+    if (!inp.disabled) {
 
         let r = inp.dataset.r;
-
         let c = inp.dataset.c;
-
         let p = inp.dataset.puzzle;
-
 
         let val = +inp.value || 0;
 
-
         total++;
 
-
         if (val === puzzles[p].solution[r][c]) {
-
             correct++;
-
         }
+    }
+});
 
-    });
+
+
+
+    
 
 
 
